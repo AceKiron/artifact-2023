@@ -1,16 +1,30 @@
-import machine
+from machine import Pin
 import time
 
-led_onboard = machine.Pin(25, machine.Pin.OUT)
-led_extern = machine.Pin(1, machine.Pin.OUT)
+led = Pin(14, Pin.OUT)
+led_onboard = Pin(25, Pin.OUT)
+
+button1 = Pin(12, Pin.IN)
+button2 = Pin(13, Pin.IN)
+
+lastEnabled = 0
+enabled = 1
 
 while True:
-    led_onboard.value(1)
-    time.sleep(.2)
-    led_extern.value(1)
-    time.sleep(.2)
+    if button1.value():
+        enabled = 1
+    elif button2.value():
+        enabled = 0
     
-    led_onboard.value(0)
-    time.sleep(.2)
-    led_extern.value(0)
-    time.sleep(.2)
+    if lastEnabled != enabled:
+        lastEnabled = enabled
+        if enabled:
+            led_onboard.value(1)
+        else:
+            led_onboard.value(0)
+            led.value(0)
+    
+    if enabled:
+        led.toggle()
+        
+    time.sleep(0.1)
