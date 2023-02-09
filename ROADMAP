@@ -1,4 +1,16 @@
 {
     "features": [
+        {
+            "name": "Upload MicroPython SSD1306 OLED driver, I2C en SPI interfaces",
+            "status": "released"
+        },
+        {
+            "name": "Schrijven van main.py",
+            "status": "indev"
+        },
+        {
+            "name": "Bestel 4x4 matrix keypad",
+            "status": "pending"
+        }
     ]
 }
