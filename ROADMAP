@@ -5,12 +5,12 @@
             "status": "released"
         },
         {
-            "name": "Schrijven van main.py",
-            "status": "indev"
+            "name": "Bestel 4x4 matrix keypad",
+            "status": "released"
         },
         {
-            "name": "Bestel 4x4 matrix keypad",
-            "status": "pending"
+            "name": "Schrijven van main.py",
+            "status": "indev"
         }
     ]
 }
