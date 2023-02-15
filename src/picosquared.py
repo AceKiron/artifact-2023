@@ -64,6 +64,7 @@ class Input:
     
     def Print(self):
         print(self.pin.value())
+        return self
     
 class Output:
     def __init__(self, pin):
@@ -76,15 +77,19 @@ class Output:
     
     def Print(self):
         print(self.pin.value())
+        return self
     
     def Toggle(self):
         self.pin.toggle()
+        return self
 
     def WriteHigh(self):
         self.pin.value(1)
+        return self
     
     def WriteLow(self):
         self.pin.value(0)
+        return self
 
 class Button(Input):
     def __init__(self, pin):
@@ -104,14 +109,16 @@ class Keypad4x4(Input):
         super().__init__(None)
 
         self.row_pins = []
+        for pin in keypad_rows:
+            pin2 = Pin(pin, Pin.OUT)
+            pin2.value(1)
+            self.row_pins.append(pin2)
+
         self.col_pins = []
-        
-        for x in range(4):
-            self.row_pins.append(Pin(keypad_rows[x], Pin.OUT))
-            self.row_pins[x].value(1)
-            
-            self.col_pins.append(Pin(keypad_columns[x], Pin.IN, Pin.PULL_DOWN))
-            self.col_pins[x].value(0)
+        for pin in keypad_columns:
+            pin2 = Pin(pin, Pin.IN, Pin.PULL_DOWN)
+            pin2.value(0)
+            self.col_pins.append(pin2)
     
     def Read(self):
         for row in range(4):
@@ -123,3 +130,11 @@ class Keypad4x4(Input):
                     return row * 4 + col
                 
             self.row_pins[row].low()
+
+    def Print(self):
+        value = self.Read()
+
+        if value != None:
+            print(self.Keys[value], value)
+        
+        return self
