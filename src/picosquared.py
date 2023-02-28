@@ -4,50 +4,25 @@ from machine import Pin, I2C
 from micropython import const
 import framebuf
 
+# De Application class bevat alleen "while True: Update()" loop in deze versie van PicoSquared
 class Application:
-    def __init__(self):
-        self.SleepTime = 0
-
-        self.enabled = True
-
-        self.Init()
-    
-    def Init(self):
-        pass
-    
     def Update(self):
         pass
     
-    def Stop(self):
-        self.enabled = False
-    
     def Run(self):
-        while self.enabled:
+        while True:
             self.Update()
 
-            if self.SleepTime > 0:
-                time.sleep(self.SleepTime)
-
-class Input:
-    def __init__(self, pin):
-        if pin != None:
-            self.pin = Pin(pin, Pin.IN)
-
-    def Read(self):
-        return self.pin.value()
-    
-    def Print(self):
-        print(self.pin.value())
-
-class Keypad4x4(Input):
+# Dit is de class voor de 4x4 matrix keypad
+class Keypad4x4:
+    # Keys is een static variable, in main.py wordt deze array opgevraagd met "ps.Keypad4x4.Keys"
     Keys = ["1", "2", "3", "A",
             "4", "5", "6", "B",
             "7", "8", "9", "C",
             "*", "0", "#", "D"]
     
+    # __init__ is een functie die uitgevoerd wordt wanneer een object van deze class gemaakt wordt
     def __init__(self, keypad_rows, keypad_columns):
-        super().__init__(None)
-
         self.row_pins = []
         self.col_pins = []
         
@@ -58,6 +33,7 @@ class Keypad4x4(Input):
             self.col_pins.append(Pin(keypad_columns[x], Pin.IN, Pin.PULL_DOWN))
             self.col_pins[x].value(0)
     
+    # Deze functie leest welke knop ingedrukt wordt, als er geen ingedrukt wordt returnt het None
     def Read(self):
         for row in range(4):
             self.row_pins[row].high()
@@ -69,6 +45,7 @@ class Keypad4x4(Input):
                 
             self.row_pins[row].low()
 
+# Deze class is gekopieerd van https://github.com/stlehmann/micropython-ssd1306/blob/master/ssd1306.py
 class SSD1306(framebuf.FrameBuffer):
     # register definitions
     SET_CONTRAST = const(0x81)
@@ -163,6 +140,7 @@ class SSD1306(framebuf.FrameBuffer):
         self.write_cmd(self.pages - 1)
         self.write_data(self.buffer)
 
+# Deze class is ook gedeeltelijk gekopieerd van https://github.com/stlehmann/micropython-ssd1306/blob/master/ssd1306.py
 class SSD1306_I2C(SSD1306):
     def __init__(self, width, height, scl, sda, freq=200000, addr=0x3C, external_vcc=False):
         self.i2c = I2C(0, scl=Pin(scl), sda=Pin(sda), freq=freq)
