@@ -65,6 +65,10 @@ class MyApp(ps.Application):
             try:
                 # Probeer de formule op te lossen
                 self.formula = str(eval(self.formula))
+                
+                # Als de opgeloste formule eindigt op een .0, verberg deze .0
+                if self.formula.endswith(".0"):
+                    self.formula = self.formula.replace(".0", "")
             except:
                 # Als dat niet lukt, zet "ERROR" op het scherm
                 self.formula = "ERROR"
