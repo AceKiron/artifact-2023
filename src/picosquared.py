@@ -24,14 +24,22 @@ class Application:
     def __init__(self, defaultState):
         Application.__instance = self
         
+        self.__lastState = None
         self.__state = defaultState
         self.__running = False
         
     def setState(self, state):
+        self.__lastState = self.__state
         self.__state = state
         
     def getState(self):
         return self.__state
+    
+    def getLastState(self):
+        return self.__lastState
+    
+    def revertToLastState(self):
+        self.__lastState, self.__state = self.__state, self.__lastState
     
     def stop(self):
         self.__running = False
