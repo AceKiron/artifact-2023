@@ -3,25 +3,52 @@
 from machine import Pin, I2C
 from micropython import const
 import framebuf
+import utime
 
-# De Application class bevat alleen "while True: Update()" loop in deze versie van PicoSquared
-class Application:
-    def Update(self):
+class State:
+    def __init__(self):
         pass
     
-    def Run(self):
-        while True:
-            self.Update()
+    def update(self):
+        pass
 
-# Dit is de class voor de 4x4 matrix keypad
+class Application:
+    __instance = None
+    
+    @staticmethod
+    def getInstance(defaultState=None):
+        if Application.__instance == None:
+            Application(defaultState)
+        return Application.__instance
+    
+    def __init__(self, defaultState):
+        Application.__instance = self
+        
+        self.__state = defaultState
+        self.__running = False
+        
+    def setState(self, state):
+        self.__state = state
+        
+    def getState(self):
+        return self.__state
+    
+    def stop(self):
+        self.__running = False
+
+    def run(self, tps=1):
+        self.__running = True
+        
+        while self.__running:
+            self.__state.update()
+            utime.sleep(1 / tps)
+
 class Keypad4x4:
-    # Keys is een static variable, in main.py wordt deze array opgevraagd met "ps.Keypad4x4.Keys"
     Keys = ["1", "2", "3", "A",
             "4", "5", "6", "B",
             "7", "8", "9", "C",
             "*", "0", "#", "D"]
     
-    # __init__ is een functie die uitgevoerd wordt wanneer een object van deze class gemaakt wordt
     def __init__(self, keypad_rows, keypad_columns):
         self.row_pins = []
         self.col_pins = []
@@ -33,8 +60,7 @@ class Keypad4x4:
             self.col_pins.append(Pin(keypad_columns[x], Pin.IN, Pin.PULL_DOWN))
             self.col_pins[x].value(0)
     
-    # Deze functie leest welke knop ingedrukt wordt, als er geen ingedrukt wordt returnt het None
-    def Read(self):
+    def read(self):
         for row in range(4):
             self.row_pins[row].high()
             
@@ -45,7 +71,6 @@ class Keypad4x4:
                 
             self.row_pins[row].low()
 
-# Deze class is gekopieerd van https://github.com/stlehmann/micropython-ssd1306/blob/master/ssd1306.py
 class SSD1306(framebuf.FrameBuffer):
     # register definitions
     SET_CONTRAST = const(0x81)
