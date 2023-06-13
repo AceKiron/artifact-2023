@@ -12,9 +12,8 @@ import picosquared as ps
 import utime
 
 class ErrorState(ps.State):
-    def __init__(self, oled, myState):
+    def __init__(self, oled):
         self.oled = oled
-        self.myState = myState
         
         self.error = ""
     
@@ -24,7 +23,7 @@ class ErrorState(ps.State):
     def update(self):
         putTextOnOLED(self.oled, "Error:\n" + self.error)
         utime.sleep(2)
-        ps.Application.getInstance().setState(self.myState)
+        ps.Application.getInstance().revertToLastState()
 
 class MyState(ps.State):
     def __init__(self, keypad, oled):
@@ -37,7 +36,7 @@ class MyState(ps.State):
             initialValue = self.keypad.read()
         )
         
-        self.errorState = ErrorState(oled, self)
+        self.errorState = ErrorState(oled)
     
     def solve(self):
         try:
