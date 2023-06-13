@@ -1,5 +1,5 @@
-# artifact
-Hier is de code te vinden voor mijn artifact voor eindexamen informatica 2023.
+# artifact-2023
+Hier is de code te vinden voor mijn artifact voor examen informatica 2023.
 
 ## Links
 - https://how2electronics.com/simple-calculator-using-keypad-oled-raspberry-pi-pico/
