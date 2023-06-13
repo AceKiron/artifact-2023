@@ -112,7 +112,7 @@ class MyState(ps.State):
         elif page == 5:
             self.typewriter.setTargetText("Correct! :D")
         elif page == 6:
-            self.typewriter.setTargetText("Incorrect. :C")
+            self.typewriter.setTargetText("Incorrect. :C\nCorrect answer: " + self.game.answers[self.game.correct_index])
     
     def onCorrect(self):
         self.setPage(5)
@@ -127,37 +127,39 @@ class MyState(ps.State):
         
         value = self.keypad.read()
         
+        if self.game.hasAnswered:
+            if not self.typewriter.isTyping():
+                utime.sleep(1)
+                self.game.chooseQuestion()
+                self.setPage(0)
+                
+                return
+        
         if self.buttonPressListener.update(value):
-            if self.game.hasAnswered:
-                if not self.typewriter.isTyping():
-                    utime.sleep(1)
-                    self.game.chooseQuestion()
-                    self.setPage(0)
-            else:
-                # Navigeer tussen tekstblokken
-                if value == 12: # *
-                    newPage = self.page - 1
-                    if newPage == -1:
-                        newPage = 0
-                    self.setPage(newPage)
+            # Navigeer tussen tekstblokken
+            if value == 12: # *
+                newPage = self.page - 1
+                if newPage == -1:
+                    newPage = 0
+                self.setPage(newPage)
+                
+                utime.sleep(0.1)
+            elif value == 14: # #
+                newPage = self.page + 1
+                if newPage == 5:
+                    newPage = 4
+                self.setPage(newPage)
+                
+                utime.sleep(0.1)
                     
-                    utime.sleep(0.1)
-                elif value == 14: # #
-                    newPage = self.page + 1
-                    if newPage == 5:
-                        newPage = 4
-                    self.setPage(newPage)
-                    
-                    utime.sleep(0.1)
-                        
-                # Kies antwoorden
-                elif value == 3: # A
-                    self.game.guess(0, self.onCorrect, self.onIncorrect)
-                elif value == 7: # B
-                    self.game.guess(1, self.onCorrect, self.onIncorrect)
-                elif value == 11: # C
-                    self.game.guess(2, self.onCorrect, self.onIncorrect)
-                elif value == 15: # D
-                    self.game.guess(3, self.onCorrect, self.onIncorrect)
+            # Kies antwoorden
+            elif value == 3: # A
+                self.game.guess(0, self.onCorrect, self.onIncorrect)
+            elif value == 7: # B
+                self.game.guess(1, self.onCorrect, self.onIncorrect)
+            elif value == 11: # C
+                self.game.guess(2, self.onCorrect, self.onIncorrect)
+            elif value == 15: # D
+                self.game.guess(3, self.onCorrect, self.onIncorrect)
         
         self.lastButtonPress = value
